@@ -7,15 +7,12 @@ def usage():
     print("Options:\n\t-c Convert <MAC_ADDRESS> to decimal|hexadecimal notation")
 
 def cleanMAC(macAddress):
-    if macAddress.find('.') or macAddress.find(':'):
-        cleanMAC = macAddress.replace('.','')
-        cleanMAC = cleanMAC.replace(':','')
-        if len(cleanMAC) == 12:
-            return cleanMAC
-        else:
-            print("Invalid MAC address!")
-            usage()
-            return 1
+    if '.' or ':' in macAddress:
+        if '.' in macAddress:
+            macAddress = macAddress.replace('.','')
+        elif ':' in macAddress:
+            macAddress = macAddress.replace(':','')
+    return macAddress
 
 def convertMAC(macAddress):
     #macAddress is in decimal form...
@@ -53,10 +50,12 @@ def compareMACs(file1, file2):
         return 1
 
     #create dict for colored text
+    #this uses ANSI escape sequences to color output in terminal
+    #terminal must have these enabled
     class txtColors:
         VALID = '\033[92m'
         INVALID = '\033[91m'
-        UNTESTED = '\033[95m'
+        UNTESTED = '\033[94m'
         WHITE = '\033[00m'
 
     #create lists to store line entries
@@ -67,7 +66,7 @@ def compareMACs(file1, file2):
 
     #iterate through file_01.txt entry lines
     for line in file_01obj:
-        newLine = cleanMAC(line.strip())
+        newLine = cleanMAC(line.rstrip())
         if newLine == 1:
             return 1
         else:
@@ -75,7 +74,7 @@ def compareMACs(file1, file2):
             f1.append(newLine)
 
     for line in file_02obj:
-        newLine = cleanMAC(line.strip())
+        newLine = cleanMAC(line.rstrip())
         if newLine == 1:
             return 1
         else:
@@ -103,7 +102,7 @@ def compareMACs(file1, file2):
 
     print("\n" + txtColors.WHITE + "Tested MACs")
     for item in f1:
-        print(txtColors.UNTESTED + item)
+        print(txtColors.UNTESTED + item + txtColors.WHITE)
 
 def main():
     #validate argument count
